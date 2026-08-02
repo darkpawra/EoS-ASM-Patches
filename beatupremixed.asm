@@ -1,6 +1,8 @@
 ; -------------------------------------------------------------------------
-; Darkpawra 14/06/2026 - Tested ??/??/2026
-; Beat Up deals damage and then calls all teammates to your side.
+; Darkpawra 01/08/2026 - Tested 01/08/2026
+; Beat Up targets, and has a different effect depending on if it targets a foe or ally.
+; Foe: Deals damage and then calls all teammates to your side.
+; Ally: Calls all teammates to your side.
 ; Based on the template provided by https://github.com/SkyTemple
 ; Uses the naming conventions from https://github.com/UsernameFodder/pmdsky-debug
 ; -------------------------------------------------------------------------
@@ -25,8 +27,7 @@
 .create "./code_out.bin", 0x02330134
     .org MoveStartAddress
     .area MaxSize
-        sub sp,sp,#0x4
-        mov r10,FALSE
+		sub r13, r13, #0x4
 		
 		ldr   r3,[r4,#0xB4]
         ldrb  r0,[r3,#0x6]
@@ -40,7 +41,7 @@
         beq   no_damage
         
         ; Damage the target.
-        str r7,[sp,#0x0]
+        str r7,[r13,#0x0]
         mov r0,r9
         mov r1,r4
         mov r2,r8
@@ -54,10 +55,11 @@
 		mov r2,r8
 		mov r3,r7
 		bl DoMoveBeatUp
+		mov r0,#0x1
 		mov r10,r0
         
     return:
-        add sp,sp,#0x4
+		add r13, r13, #0x4
         b   MoveJumpAddress
         .pool
     .endarea
